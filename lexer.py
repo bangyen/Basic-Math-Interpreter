@@ -19,6 +19,14 @@ class Lexer:
 
     #generates the tokens so uses yield instead of return
     def generateTokens(self):
+        char_dict = {
+            '+': Token(TokenType.PLUS),
+            '-': Token(TokenType.MINUS),
+            '/': Token(TokenType.DIVIDE),
+            '*': Token(TokenType.MULTIPLY),
+            '(': Token(TokenType.LPAREN),
+            ')': Token(TokenType.RPAREN)
+        }
         while self.currChar:
             if self.currChar in WHITESPACE:
                 self.getNextChar()
@@ -26,24 +34,9 @@ class Lexer:
                 num = self.generateNumber()
                 if num:
                     yield num
-            elif self.currChar == "+":
+            elif self.currChar in char_dict:
                 self.getNextChar()
-                yield Token(TokenType.PLUS)
-            elif self.currChar == "-":
-                self.getNextChar()
-                yield Token(TokenType.MINUS)
-            elif self.currChar == "/":
-                self.getNextChar()
-                yield Token(TokenType.DIVIDE)
-            elif self.currChar == "*":
-                self.getNextChar()
-                yield Token(TokenType.MULTIPLY)
-            elif self.currChar == "(":
-                self.getNextChar()
-                yield Token(TokenType.LPAREN)
-            elif self.currChar == ")":
-                self.getNextChar()
-                yield Token(TokenType.RPAREN)
+                yield char_dict[self.currChar]
             else:
                 raise Exception(f"Illegal character '{self.currChar}'")
 
@@ -51,9 +44,9 @@ class Lexer:
     def generateNumber(self):
         numberString = ""
         numDecimalPoints = 0
-        while self.currChar and self.currChar in DIGITS or (self.currChar == "." and numDecimalPoints==0):
+        while self.currChar and self.currChar in DIGITS or (self.currChar == "." and numDecimalPoints == 0):
             if self.currChar == ".":
-                numDecimalPoints+=1
+                numDecimalPoints += 1
                 numberString += "."
             else:
                 numberString += self.currChar
